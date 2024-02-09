@@ -14,11 +14,15 @@ class Player(pygame.sprite.Sprite):
         self.image = self.player_walk[self.player_index]
         self.rect = self.image.get_rect(midbottom = (80,300))
         self.gravity = 0
+        
+        self.jump_sound = pygame.mixer.Sound('audio/jump.mp3')
+        self.jump_sound.set_volume(0.1)
 
     def player_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
             self.gravity = -20
+            self.jump_sound.play()
 
     def apply_gravity(self):
         self.gravity += 1
@@ -97,12 +101,14 @@ def obstacle_movement(obstacle_list):
 def collisions(player, obstacles):
     if obstacles:
         for obstacle_rect in obstacles:
-            if player.colliderect(obstacle_rect): return False
+            if player.colliderect(obstacle_rect): 
+                return False
     return True
 
 def collision_sprite():
     if pygame.sprite.spritecollide(player.sprite, obstacle_group, False): # becareful just getting player because it is a single group also u cant get a regular group since there are so many sprites.... its False then the snail gets deleted but doesnt matter in our case
         obstacle_group.empty() # clears all the snails
+        death_audio.play()
         return False
     else: return True
 
@@ -126,6 +132,11 @@ score_text = pygame.font.Font('font/Pixeltype.ttf', 50) # font, and font size as
 game_active = False
 start_time = 0
 score = 0
+bg_music = pygame.mixer.Sound('audio/music.wav')
+bg_music.set_volume(.01)
+bg_music.play(loops = -1)
+death_audio = pygame.mixer.Sound('audio/death.mp3')
+death_audio.set_volume(.1)
 
 #Groups
 player = pygame.sprite.GroupSingle()
