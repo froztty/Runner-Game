@@ -24,6 +24,12 @@ def obstacle_movement(obstacle_list):
         return obstacle_list
     else: return []
 
+def collisions(player, obstacles):
+    if obstacles:
+        for obstacle_rect in obstacles:
+            if player.colliderect(obstacle_rect): return False
+    return True
+
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Runner')
@@ -117,6 +123,7 @@ while True:
         obstacle_rect_list = obstacle_movement(obstacle_rect_list) # we run the function and moves it and then it gets updated
         
         # collision
+        game_active = collisions(player_rect, obstacle_rect_list)
         # if snail_rect.colliderect(player_rect):
         #     game_active = False
         
@@ -132,6 +139,9 @@ while True:
     else:
         screen.fill((94, 129, 162))
         screen.blit(player_stand, player_stand_rect)
+        obstacle_rect_list.clear() # removes all the items inside once the game ends
+        player_rect.midbottom = (80, 300)
+        player_gravity = 0                  #makes sure that the player doesnt die from the fly and spawns where it was left off
         
         score_message = score_text.render(f'Your score: {score}',False,(111,196,169))
         score_msg_rect = score_message.get_rect(center = (400,330))
