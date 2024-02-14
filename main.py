@@ -69,7 +69,9 @@ class Obstacle(pygame.sprite.Sprite):
     
     def update(self):
         self.animation_state()
-        self.rect.x -= 6 # moves the obstacles
+        if speed_up:
+            self.rect.x -= 10
+        else: self.rect.x -= 6 # moves the obstacles
         self.destroy()    
 
     def destroy(self):
@@ -86,7 +88,11 @@ def display_score():
 def obstacle_movement(obstacle_list):
     if obstacle_list:
         for obstacle_rect in obstacle_list:
-            obstacle_rect.x -= 5
+            if speed_up:
+                obstacle_rect.x -= 10
+                print("sped up")
+            else:
+                obstacle_rect.x -= 5
             
             if obstacle_rect.bottom == 300:
                 screen.blit(snail_surf, obstacle_rect)
@@ -124,6 +130,15 @@ def player_animation():
         if player_index >= len(player_walk): player_index = 0
         player_surf = player_walk[int(player_index)]
 
+def draw_flash_effect(screen, flash_color, flash_duration):
+    flash_surface = pygame.Surface(screen.get_size())
+    flash_surface.fill(flash_color)
+    for alpha in range(0, 255, 15):
+        flash_surface.set_alpha(alpha)
+        screen.blit(flash_surface, (0, 0))
+        pygame.display.flip()
+        pygame.time.delay(int(flash_duration / 16))
+
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Runner')
@@ -137,6 +152,7 @@ bg_music.set_volume(.01)
 bg_music.play(loops = -1)
 death_audio = pygame.mixer.Sound('audio/death.mp3')
 death_audio.set_volume(.1)
+speed_up = False
 
 #Groups
 player = pygame.sprite.GroupSingle()
@@ -213,6 +229,10 @@ while True:
                 if event.key == pygame.K_SPACE and player_rect.bottom >= 300:
                     player_gravity = -20 # adds jump motion
             if event.type == obstacle_timer:
+                if speed_up:
+                    pygame.time.set_timer(obstacle_timer, 700)
+                else:
+                    pygame.time.set_timer(obstacle_timer, 1500)
                 obstacle_group.add(Obstacle(choice(['fly', 'snail', 'snail', 'snail']))) # snail has a 75% and fly is 25%
                 # if randint(0,2):
                 #     obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100),300)))
@@ -241,6 +261,13 @@ while True:
         # #pygame.draw.line(screen, 'Black', (0, 0), pygame.mouse.get_pos(), 1) #draw line that follows mouse see documentation.txt
         # screen.blit(score_surf, score_rect)
         score = display_score()
+        if score >= 30:
+            speed_up = True
+        else: speed_up = False
+        
+        if speed_up == True and score == 30:
+            draw_flash_effect(screen, (255, 0, 0), 500)
+            
         
         # snail_rect.right -= 4
         # if snail_rect.right <= 0 : snail_rect.left = 800 # this checks if the right side of the snail is gone then the left side will appear on the other side of the screen
@@ -283,6 +310,7 @@ while True:
         obstacle_rect_list.clear() # removes all the items inside once the game ends
         player_rect.midbottom = (80, 300)
         player_gravity = 0                  #makes sure that the player doesnt die from the fly and spawns where it was left off
+        speed_up = False
         
         score_message = score_text.render(f'Your score: {score}',False,(111,196,169))
         score_msg_rect = score_message.get_rect(center = (400,330))
