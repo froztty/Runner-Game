@@ -13,13 +13,15 @@ Game is about running into snails and flies that focus on how to implement Sprit
 
 ## Personal Improvements
 
-- Added a speed up to make the game more interesting and to add more difficulty. There is a flash effect so be wary of that when your score hits 30. 
+- Added a speed up mode to make the game more interesting and to add more difficulty. There is a flash effect so be wary of that when your score hits 30 and the snails and flies move faster and spawn twice as fast. 
 
-- Added a death sound.
+- Added a death sound. 
 
 ## Future additions/improvements to be made
 
-- Adding a scoreboard, saving your score and trying to beat mine
+- Adding a scoreboard, saving your score and trying to beat mine. Which is basically having multiple screens instead of just menu screen and the game itself. 
+
+- Having it run on a browser using pygbag.
 
 
 Don't forget to share, have fun and enjoy the games!
